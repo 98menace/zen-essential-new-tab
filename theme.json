@@ -1,0 +1,13 @@
+
+{
+  "id": "essential-open-as-new-tab",
+  "name": "Essential Open as New Tab",
+  "description": "Open Essential tabs as new regular tabs.",
+  "author": "ChatGPT",
+  "version": "1.0.0",
+  "scripts": {
+    "index.js": {
+      "include": ["chrome://browser/content/browser.xhtml"]
+    }
+  }
+}
