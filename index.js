@@ -1,43 +1,61 @@
 
 (() => {
-  const TAG = "[Essential Open as New Tab]";
+  const KEY = "__essentialOpenAsNewTabV2";
 
-  if (window.__essentialOpenAsNewTab) return;
-  window.__essentialOpenAsNewTab = true;
+  if (window[KEY]) return;
+  window[KEY] = true;
 
-  const container = gBrowser.tabContainer;
+  console.log("[Essential New Tab] Mod loaded");
 
-  container.addEventListener("click", (event) => {
+  document.addEventListener("click", (event) => {
     if (
       event.button !== 0 ||
+      event.detail !== 1 ||
       event.ctrlKey ||
       event.metaKey ||
       event.shiftKey ||
-      event.altKey ||
-      event.detail !== 1
+      event.altKey
     ) return;
 
-    const tab = event.target.closest("tab.tabbrowser-tab");
+    const path = event.composedPath();
 
-    if (!tab || !tab.hasAttribute("zen-essential")) return;
+    const tab = path.find(
+      element =>
+        element?.localName === "tab" &&
+        element.hasAttribute?.("zen-essential")
+    );
 
-    if (event.target.closest("toolbarbutton")) return;
+    if (!tab) return;
 
-    const browser = tab.linkedBrowser;
-    const url = browser?.currentURI?.spec;
+    // Ignore tab controls, not clicks on the tab itself.
+    if (path.some(element =>
+      element?.classList?.contains("tab-close-button") ||
+      element?.classList?.contains("zen-tab-reset-button")
+    )) return;
+
+    const url =
+      tab._zenPinnedInitialState?.entry?.url ||
+      tab.linkedBrowser?.currentURI?.spec;
 
     if (!url || url === "about:blank") return;
 
+    // Stop Zen from selecting the original Essential.
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
 
+    const uri = Services.io.newURI(url);
+    const principal =
+      Services.scriptSecurityManager.createContentPrincipal(uri, {});
+
     const newTab = gBrowser.addTab(url, {
-      triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()
+      triggeringPrincipal: principal,
+      inBackground: false
     });
 
     gBrowser.selectedTab = newTab;
-  }, true);
 
-  console.log(TAG, "Installed");
+    console.log("[Essential New Tab] Opened:", url);
+
+  }, true);
 })();
