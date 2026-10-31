@@ -3,11 +3,17 @@
   "id": "essential-open-as-new-tab",
   "name": "Essential Open as New Tab",
   "description": "Open Essential tabs as new regular tabs.",
-  "author": "ChatGPT",
-  "version": "1.0.0",
+  "author": "98menace",
+  "version": "1.0.2",
+  "createdAt": "2026-10-31",
+  "updatedAt": "2026-10-31T11:40:00Z",
+  "homepage": "https://github.com/98menace/zen-essential-new-tab",
   "scripts": {
-    "index.js": {
-      "include": ["chrome://browser/content/browser.xhtml"]
+    "chrome": {
+      "essential-open-as-new-tab.uc.js": {
+        "include": ["chrome://browser/content/browser.xhtml"]
+      }
     }
-  }
+  },
+  "supportsUnload": true
 }
